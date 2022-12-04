@@ -24,7 +24,7 @@ python detect_int8.py models/face_640_small.onnx 640  # int8量化
 python detect_int16.py models/face_640_small.onnx 640 # int16量化
 ```
 
-**注意：**：
+**注意：**
 
 1.*这里使用int8量化，且reorder_channel='2 1 0'，此时，当调用量化后的模型时，无需再进行rgb2bgr或rgb2bgr操作，这个要特别注意，具体可参考demo_rknn.py中的预处理操作*
 

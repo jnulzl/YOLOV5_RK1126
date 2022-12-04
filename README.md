@@ -16,12 +16,13 @@
 ## 构建
 
 ```shell
-cd $ROOT
+git clone https://github.com/jnulzl/YOLOV5_RK1126
+cd YOLOV5_RK1126
 mkdir build && cd build
 export CROSS_COMPILER_ROOT = 'YOUR CROSS COMPILER ROOT'
 cmake ../ -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=$CROSS_COMPILER_ROOT/bin/arm-none-linux-gnueabihf-g++ -DCMAKE_C_COMPILER=$CROSS_COMPILER_ROOT/bin/arm-none-linux-gnueabihf-gcc
 ```
-输出产物在`$ROOT/bin/Linux`下面，拷贝到板子跑即可。
+输出产物在`YOLOV5_RK1126/bin/Linux`下面，拷贝到板子跑即可。
 
 ## 將模型转化为buffer直接编译到库或者可执行文件中
 
