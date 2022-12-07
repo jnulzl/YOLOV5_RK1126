@@ -46,34 +46,42 @@ void decode_net_output(float* src, int src_n, int src_c, int src_h, int src_w,
     }
 }
 
-void nms(std::vector<BoxInfo>& input_boxes, float nms_thresh) {
+void nms(std::vector<BoxInfo>& input_boxes, float nms_thresh, int num_cls) {
     std::sort(input_boxes.begin(), input_boxes.end(), [](BoxInfo a, BoxInfo b) {return a.score > b.score; });
-    std::vector<float>vArea(input_boxes.size());
+    std::vector<float> vArea(input_boxes.size());
     for (int i = 0; i < int(input_boxes.size()); ++i)
     {
         vArea[i] = (input_boxes.at(i).x2 - input_boxes.at(i).x1 + 1)
                    * (input_boxes.at(i).y2 - input_boxes.at(i).y1 + 1);
     }
-    for (int i = 0; i < int(input_boxes.size()); ++i)
+    for (int cls = 0; cls < num_cls; ++cls)
     {
-        for (int j = i + 1; j < int(input_boxes.size());)
+        for (int i = 0; i < int(input_boxes.size()); ++i)
         {
-            float xx1 = std::max(input_boxes[i].x1, input_boxes[j].x1);
-            float yy1 = std::max(input_boxes[i].y1, input_boxes[j].y1);
-            float xx2 = std::min(input_boxes[i].x2, input_boxes[j].x2);
-            float yy2 = std::min(input_boxes[i].y2, input_boxes[j].y2);
-            float w = std::max(float(0), xx2 - xx1 + 1);
-            float   h = std::max(float(0), yy2 - yy1 + 1);
-            float   inter = w * h;
-            float ovr = inter / (vArea[i] + vArea[j] - inter);
-            if (ovr >= nms_thresh)
+            for (int j = i + 1; j < int(input_boxes.size());)
             {
-                input_boxes.erase(input_boxes.begin() + j);
-                vArea.erase(vArea.begin() + j);
-            }
-            else
-            {
-                j++;
+                if (cls != input_boxes[i].label || cls != input_boxes[j].label)
+                {
+                    j++;
+                    continue;
+                }
+                float xx1 = std::max(input_boxes[i].x1, input_boxes[j].x1);
+                float yy1 = std::max(input_boxes[i].y1, input_boxes[j].y1);
+                float xx2 = std::min(input_boxes[i].x2, input_boxes[j].x2);
+                float yy2 = std::min(input_boxes[i].y2, input_boxes[j].y2);
+                float w = std::max(float(0), xx2 - xx1 + 1);
+                float h = std::max(float(0), yy2 - yy1 + 1);
+                float inter = w * h;
+                float ovr = inter / (vArea[i] + vArea[j] - inter);
+                if (ovr >= nms_thresh)
+                {
+                    input_boxes.erase(input_boxes.begin() + j);
+                    vArea.erase(vArea.begin() + j);
+                }
+                else
+                {
+                    j++;
+                }
             }
         }
     }
@@ -116,8 +124,7 @@ void non_max_suppression(float* src, int src_height, int src_width, float conf_t
         dets.push_back(box);
     }
 
-
-    nms(dets, nms_thresh);
+    nms(dets, nms_thresh, num_cls);
 }
 
 
