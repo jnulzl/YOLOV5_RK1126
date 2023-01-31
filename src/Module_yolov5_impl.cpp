@@ -67,7 +67,6 @@ const std::vector<BoxInfo>& CModule_yolov5_impl::get_result()
 void CModule_yolov5_impl::yolo_resize_with_opencv(const void* mat_ptr, int des_height, int des_width)
 {
     assert(des_height == des_width);
-    assert(3 == src.channels());
 
     cv::Mat des = *reinterpret_cast<cv::Mat*>(des_mat_);
     cv::Mat src = *reinterpret_cast<const cv::Mat*>(mat_ptr);
